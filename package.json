@@ -1,0 +1,62 @@
+{
+    "name": "wounded",
+    "version": "1npm.0.0",
+    "description": "",
+    "homepage": "https://github.com/Hvostyk/Wounded#readme",
+    "bugs": {
+        "url": "https://github.com/Hvostyk/Wounded/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Hvostyk/Wounded.git"
+    },
+    "license": "ISC",
+    "author": "",
+    "type": "module",
+    "main": "src/electron/main",
+    "scripts": {
+        "electron": "electron .",
+        "build:dev": "webpack --env mode=development",
+        "build:prod": "webpack --env mode=production",
+        "start": "webpack serve --open --env mode=development",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss}\"",
+        "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,scss}\""
+    },
+    "devDependencies": {
+        "@eslint-react/eslint-plugin": "^2.13.0",
+        "@eslint/compat": "^1.4.1",
+        "@eslint/js": "^9.39.3",
+        "@types/node": "^25.3.0",
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "@types/webpack-dev-server": "^4.7.1",
+        "css-loader": "^7.1.4",
+        "electron": "^40.6.0",
+        "eslint": "^9.39.3",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.5",
+        "eslint-plugin-react": "^7.37.5",
+        "eslint-plugin-react-hooks": "^7.0.1",
+        "globals": "^17.3.0",
+        "html-webpack-plugin": "^5.6.6",
+        "jiti": "^2.6.1",
+        "mini-css-extract-plugin": "^2.10.0",
+        "prettier": "3.8.1",
+        "sass": "^1.97.3",
+        "sass-loader": "^16.0.7",
+        "style-loader": "^4.0.0",
+        "ts-loader": "^9.5.4",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.56.0",
+        "webpack": "^5.105.2",
+        "webpack-cli": "^6.0.1",
+        "webpack-dev-server": "^5.2.3"
+    },
+    "dependencies": {
+        "react": "^19.2.4",
+        "react-dom": "^19.2.4"
+    }
+}
