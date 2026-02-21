@@ -12,10 +12,10 @@
     },
     "license": "ISC",
     "author": "",
-    "type": "module",
-    "main": "src/electron/main",
+    "type": "commonjs",
+    "main": "src/electron/main.mjs",
     "scripts": {
-        "electron": "electron .",
+        "electron": "npm run build:dev && electron .",
         "build:dev": "webpack --env mode=development",
         "build:prod": "webpack --env mode=production",
         "start": "webpack serve --open --env mode=development",
