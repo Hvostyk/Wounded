@@ -1,6 +1,6 @@
 import webpack from "webpack";
-import { buildWebpack } from "./config/build/buildWebpack";
-import { BuildMode, BuildPaths } from "./config/build/types/types";
+import { buildWebpack } from "./config/buildWebpack/buildWebpack";
+import { BuildMode, BuildPaths } from "./config/buildWebpack/types/types";
 import path from "path";
 
 interface EnvInterface {
