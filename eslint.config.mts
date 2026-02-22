@@ -11,6 +11,7 @@ export default tseslint.config(
             "build/**",
             "dist/**",
             "dist-react/**",
+            "dist-electron",
             "coverage/**",
             "*.min.js",
             ".eslintcache",

@@ -1,4 +1,4 @@
-import "./app.scss"
+import "./app.scss";
 export const App = () => {
     return (
         <button>
