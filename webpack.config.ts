@@ -10,7 +10,7 @@ interface EnvInterface {
 
 export default (env: EnvInterface) => {
     const paths: BuildPaths = {
-        output: path.resolve(__dirname, "build"),
+        output: path.resolve(__dirname, "dist-react"),
         entry: path.resolve(__dirname, "src/app", "index.tsx"),
         html: path.resolve(__dirname, "src/app", "index.html"),
     };

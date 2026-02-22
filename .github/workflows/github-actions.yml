@@ -20,5 +20,7 @@ jobs:
               run: npm install
             - name: build project
               run: npm run build:prod
+            - name: transpile electron
+              run: npm run transpile:electron
             - name: lint project
               run: npm run lint
