@@ -10,6 +10,7 @@ export default tseslint.config(
             "node_modules/**",
             "build/**",
             "dist/**",
+            "dist-react/**",
             "coverage/**",
             "*.min.js",
             ".eslintcache",

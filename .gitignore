@@ -2,8 +2,10 @@
 node_modules/
 
 # Build output
-build/
 dist/
+build/
+dist-electron/
+dist-react/
 *.tsbuildinfo
 
 # Logs and debug
@@ -34,3 +36,6 @@ coverage/
 .cache/
 .eslintcache
 .parcel-cache/
+
+#download Icon
+WoundedIcon.png
