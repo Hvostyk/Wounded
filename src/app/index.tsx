@@ -1,9 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { HashRouter, Route, Routes } from "react-router";
-import { TestPage1 } from "../pages/testPage1";
-import { TestPage2 } from "../pages/testPage2";
-import { App } from "./App";
+import { HashRouter } from "react-router";
 import { AppRoutes } from "./routes";
 
 const root = document.getElementById("root");
