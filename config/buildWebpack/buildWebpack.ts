@@ -26,8 +26,8 @@ export function buildWebpack(options: BuildOptions): webpack.Configuration {
         devServer: isDevMode ? buildDevServer(options) : undefined,
         optimization: isDevMode
             ? {
-                  runtimeChunk: "single",
-              }
+                runtimeChunk: "single",
+            }
             : undefined,
     };
 }

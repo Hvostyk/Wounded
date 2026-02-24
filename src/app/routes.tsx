@@ -1,13 +1,18 @@
 import { Route, Routes } from "react-router";
 import { TestPage1, TestPage2 } from "../pages";
 import { App } from "./App";
+import { NavigationRoutes } from "./types";
 
-export const AppRoutes = () => {
-    const navigationRoutes = [
+export const getNavigationRoutes = (): NavigationRoutes => {
+    return [
         { path: "/", element: <App /> },
         { path: "test1", element: <TestPage1 /> },
         { path: "test2", element: <TestPage2 /> },
-    ];
+    ]
+}
+
+export const AppRoutes = () => {
+    const navigationRoutes = getNavigationRoutes();
     return (
         <Routes>
             {navigationRoutes.map(route => (
