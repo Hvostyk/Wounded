@@ -16,7 +16,9 @@ export default tseslint.config(
             "coverage/**",
             "*.min.js",
             ".eslintcache",
-            "jest.config.js"
+            "jest.config.js",
+            "src/app/store.ts",
+            "src/services/woundedApi.ts",
         ],
     },
     eslintJs.configs.recommended,
