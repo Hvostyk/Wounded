@@ -24,3 +24,5 @@ jobs:
               run: npm run transpile:electron
             - name: lint project
               run: npm run lint
+            - name: product testing
+              run: npm run test
