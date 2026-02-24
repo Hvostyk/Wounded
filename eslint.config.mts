@@ -16,6 +16,7 @@ export default tseslint.config(
             "coverage/**",
             "*.min.js",
             ".eslintcache",
+            "jest.config.js"
         ],
     },
     eslintJs.configs.recommended,

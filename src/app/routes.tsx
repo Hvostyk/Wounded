@@ -8,8 +8,8 @@ export const getNavigationRoutes = (): NavigationRoutes => {
         { path: "/", element: <App /> },
         { path: "test1", element: <TestPage1 /> },
         { path: "test2", element: <TestPage2 /> },
-    ]
-}
+    ];
+};
 
 export const AppRoutes = () => {
     const navigationRoutes = getNavigationRoutes();

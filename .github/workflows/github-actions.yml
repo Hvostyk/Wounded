@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [main]
 jobs:
-    init:
+    Wounded_Check:
         runs-on: ubuntu-latest
         strategy:
             matrix:
@@ -24,3 +24,5 @@ jobs:
               run: npm run transpile:electron
             - name: lint project
               run: npm run lint
+            - name: product testing
+              run: npm run test
