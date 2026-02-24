@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router";
 import { TestPage1, TestPage2 } from "../pages";
-import { App } from "./App";
-import { NavigationRoutes } from "./types"
+import { App } from "./App"
+import { NavigationRoutes } from "./types";
 
 export const getNavigationRoutes = (): NavigationRoutes => {
     return [
