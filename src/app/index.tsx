@@ -1,5 +1,7 @@
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { App } from "./App";
+import { HashRouter } from "react-router";
+import { AppRoutes } from "./routes";
 
 const root = document.getElementById("root");
 
@@ -9,4 +11,10 @@ if (!root) {
 
 const container = createRoot(root);
 
-container.render(<App />);
+container.render(
+    <HashRouter>
+        <StrictMode>
+            <AppRoutes />
+        </StrictMode>
+    </HashRouter>,
+);

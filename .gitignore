@@ -36,6 +36,3 @@ coverage/
 .cache/
 .eslintcache
 .parcel-cache/
-
-#download Icon
-WoundedIcon.png

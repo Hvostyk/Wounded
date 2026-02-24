@@ -2,6 +2,7 @@ import eslintReact from "@eslint-react/eslint-plugin";
 import eslintJs from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
 import eslintPluginPrettier from "eslint-plugin-prettier";
+import unusedImports from "eslint-plugin-unused-imports";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
@@ -29,10 +30,24 @@ export default tseslint.config(
                 tsconfigRootDir: import.meta.dirname,
             },
         },
-        plugins: { prettier: eslintPluginPrettier },
+        plugins: { 
+            "unused-imports": unusedImports,
+            prettier: eslintPluginPrettier 
+        },
         rules: {
+            "no-unused-vars": "off",
+            "unused-imports/no-unused-imports": "error",
             "@eslint-react/no-missing-key": "warn",
             "prettier/prettier": "error",
+            "unused-imports/no-unused-vars": [
+                "warn",
+                {
+                    "vars": "all",
+                    "varsIgnorePattern": "^_",
+                    "args": "after-used",
+                    "argsIgnorePattern": "^_",
+                },
+            ]
         },
     },
     eslintConfigPrettier,
