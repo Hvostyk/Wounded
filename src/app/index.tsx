@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { HashRouter } from "react-router";
 import { AppRoutes } from "./routes";
-import store from "./store";
+import { store } from "./store";
 
 const root = document.getElementById("root");
 

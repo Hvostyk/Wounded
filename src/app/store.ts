@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { woundedApi } from "../services/woundedApi";
 import themeReducer from "./themeSlice";
-const store = configureStore({
+export const store = configureStore({
     reducer: {
         [woundedApi.reducerPath]: woundedApi.reducer,
         theme: themeReducer,
