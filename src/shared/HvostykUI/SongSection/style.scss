@@ -1,0 +1,32 @@
+$breakpoint: 720px;
+
+.songs-section {
+    margin-bottom: 36px;
+
+    &__title {
+        font-family: var(--font-display);
+        font-size: var(--text-lg);
+        font-weight: 700;
+        color: var(--text-primary);
+        letter-spacing: var(--tracking-tight);
+        margin-bottom: 16px;
+    }
+
+    &__empty {
+        font-size: var(--text-sm);
+        color: var(--text-secondary);
+        opacity: 0.7;
+        padding: 24px 0;
+    }
+}
+
+.songs-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+
+    @media (min-width: $breakpoint) {
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 20px;
+    }
+}

@@ -1,15 +1,30 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
+import { mockSongs, mockUsers } from "./mockData";
+import { AuthCredentials, AuthResponse, Song } from "./types";
 
 export const woundedApi = createApi({
     reducerPath: "woundedApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "https://wounded.com" }),
+    baseQuery: fakeBaseQuery(),
     endpoints: builder => ({
-        // getWounded: builder.query<any, string>({
-        //     query: name => `wounded/${name}`,
-        // }),
+        getSongs: builder.query<Song[], void>({
+            queryFn: () => ({ data: mockSongs }),
+        }),
+        login: builder.mutation<AuthResponse, AuthCredentials>({
+            queryFn: ({ login, password }) => {
+                const user = mockUsers.find(u => u.login === login && u.password === password);
+                if (user) {
+                    return { data: { token: `mock_${Date.now()}`, login } };
+                }
+                return { error: { status: 401, error: "Invalid credentials" } };
+            },
+        }),
+        register: builder.mutation<AuthResponse, AuthCredentials>({
+            queryFn: ({ login, password }) => {
+                mockUsers.push({ login, password });
+                return { data: { token: `mock_${Date.now()}`, login } };
+            },
+        }),
     }),
 });
 
-// Export hooks for usage in functional components, which are
-// auto-generated based on the defined endpoints
-// export const { useGetWounded } = woundedApi;
+export const { useGetSongsQuery, useLoginMutation, useRegisterMutation } = woundedApi;

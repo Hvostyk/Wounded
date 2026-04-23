@@ -1,0 +1,10 @@
+.library-page {
+    &__title {
+        font-family: var(--font-display);
+        font-size: var(--text-xl);
+        font-weight: 700;
+        color: var(--text-primary);
+        letter-spacing: var(--tracking-tight);
+        margin-bottom: 24px;
+    }
+}
