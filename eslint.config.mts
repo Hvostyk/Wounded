@@ -19,6 +19,7 @@ export default tseslint.config(
             "jest.config.js",
             "src/app/store.ts",
             "src/services/woundedApi.ts",
+            "./jest.setup.js"
         ],
     },
     eslintJs.configs.recommended,

@@ -1,3 +1,5 @@
+import { MyForm } from "../shared/HvostykUI/form";
+
 export const TestPage1 = () => {
-    return <div>testPage1</div>;
+    return <MyForm testId="test-page-form" />;
 };

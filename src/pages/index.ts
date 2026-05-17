@@ -1,2 +1,4 @@
-export * from "./testPage1";
-export * from "./testPage2";
+export * from "./AuthPage";
+export * from "./HomePage";
+export * from "./LibraryPage";
+export * from "./PlaylistsPage";
