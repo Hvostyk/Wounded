@@ -31,11 +31,38 @@ export const MyForm = ({ layout = "vertical", variant = "outlined", form: extern
                     <h2 className="wounded-form-title">{isRegister ? "Регистрация" : "Вход"}</h2>
                 </div>
 
-                <Form.Item name="login" label="Login" rules={[{ required: true }]}>
+                <Form.Item
+                    name="login"
+                    label="Login"
+                    rules={[
+                        { required: true, message: "Введите логин" },
+                        { min: 5, max: 22, message: "Логин должен быть от 5 до 22 символов" },
+                    ]}
+                >
                     <Input />
                 </Form.Item>
 
-                <Form.Item name="password" label="Password" rules={[{ required: true }]}>
+                {isRegister && (
+                    <Form.Item
+                        name="username"
+                        label="Username"
+                        rules={[
+                            { required: true, message: "Введите имя профиля" },
+                            { min: 4, max: 20, message: "Имя профиля должно быть от 4 до 20 символов" },
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+                )}
+
+                <Form.Item
+                    name="password"
+                    label="Password"
+                    rules={[
+                        { required: true, message: "Введите пароль" },
+                        { min: 6, max: 32, message: "Пароль должен быть от 6 до 32 символов" },
+                    ]}
+                >
                     <Input.Password />
                 </Form.Item>
 
@@ -45,13 +72,14 @@ export const MyForm = ({ layout = "vertical", variant = "outlined", form: extern
                         label="Confirm Password"
                         dependencies={["password"]}
                         rules={[
-                            { required: true },
+                            { required: true, message: "Подтвердите пароль" },
                             ({ getFieldValue }) => ({
                                 validator(_, value) {
                                     if (!value || getFieldValue("password") === value) {
                                         return Promise.resolve();
                                     }
-                                    return Promise.reject(new Error("Passwords do not match"));
+
+                                    return Promise.reject(new Error("Пароли не совпадают"));
                                 },
                             }),
                         ]}

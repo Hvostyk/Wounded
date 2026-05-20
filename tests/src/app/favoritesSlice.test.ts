@@ -1,11 +1,64 @@
 import { configureStore } from "@reduxjs/toolkit";
-import favoritesReducer, { addToPlaylist, createPlaylist, deletePlaylist, removeFromPlaylist, toggleFavorite } from "../../../src/app/favoritesSlice";
+import { logout } from "../../../src/app/authSlice";
+import favoritesReducer from "../../../src/app/favoritesSlice";
+import { MusicPlaylist, Song } from "../../../src/services/types";
+import { woundedApi } from "../../../src/services/woundedApi";
 
-const makeStore = () => configureStore({ reducer: { favorites: favoritesReducer } });
+const makeStore = () =>
+    configureStore({
+        reducer: {
+            favorites: favoritesReducer,
+            [woundedApi.reducerPath]: woundedApi.reducer,
+        },
+        middleware: getDefaultMiddleware => getDefaultMiddleware().concat(woundedApi.middleware),
+    });
+
+const favoriteSongs: Song[] = [
+    {
+        id: "track-1",
+        title: "A",
+        artist: "X",
+        duration: "3:00",
+        durationSeconds: 180,
+        album: "AL",
+        genre: "Rock",
+        color: "#f00",
+        status: "ready",
+        manifestUrl: null,
+    },
+    {
+        id: "track-2",
+        title: "B",
+        artist: "Y",
+        duration: "4:00",
+        durationSeconds: 240,
+        album: "BL",
+        genre: "Pop",
+        color: "#0f0",
+        status: "ready",
+        manifestUrl: null,
+    },
+];
+
+const playlists: MusicPlaylist[] = [
+    {
+        id: "playlist-1",
+        title: "Focus",
+        description: "",
+        creatorId: "user-1",
+        trackIds: ["track-1"],
+    },
+];
 
 describe("favoritesSlice", () => {
-    beforeEach(() => {
-        localStorage.clear();
+    const createQueryFulfilledAction = <Payload>(endpointName: string, payload: Payload) => ({
+        type: `${woundedApi.reducerPath}/executeQuery/fulfilled`,
+        payload,
+        meta: {
+            arg: {
+                endpointName,
+            },
+        },
     });
 
     it("initial state has empty favorites and playlists", () => {
@@ -14,59 +67,24 @@ describe("favoritesSlice", () => {
         expect(store.getState().favorites.playlists).toHaveLength(0);
     });
 
-    it("toggleFavorite adds a song id", () => {
+    it("stores favorite ids from the API payload", () => {
         const store = makeStore();
-        store.dispatch(toggleFavorite(1));
-        expect(store.getState().favorites.favoriteIds).toContain(1);
+        store.dispatch(createQueryFulfilledAction("getFavoriteSongs", favoriteSongs));
+        expect(store.getState().favorites.favoriteIds).toEqual(["track-1", "track-2"]);
     });
 
-    it("toggleFavorite removes an already-favorited song", () => {
+    it("stores playlists from the API payload", () => {
         const store = makeStore();
-        store.dispatch(toggleFavorite(1));
-        store.dispatch(toggleFavorite(1));
-        expect(store.getState().favorites.favoriteIds).not.toContain(1);
+        store.dispatch(createQueryFulfilledAction("getPlaylists", playlists));
+        expect(store.getState().favorites.playlists).toEqual(playlists);
     });
 
-    it("createPlaylist adds a playlist with correct name", () => {
+    it("resets state on logout", () => {
         const store = makeStore();
-        store.dispatch(createPlaylist("My List"));
-        const playlists = store.getState().favorites.playlists;
-        expect(playlists).toHaveLength(1);
-        expect(playlists[0].name).toBe("My List");
-        expect(playlists[0].songIds).toHaveLength(0);
-    });
-
-    it("deletePlaylist removes the playlist", () => {
-        const store = makeStore();
-        store.dispatch(createPlaylist("To Delete"));
-        const id = store.getState().favorites.playlists[0].id;
-        store.dispatch(deletePlaylist(id));
-        expect(store.getState().favorites.playlists).toHaveLength(0);
-    });
-
-    it("addToPlaylist appends a song to the playlist", () => {
-        const store = makeStore();
-        store.dispatch(createPlaylist("Rock"));
-        const id = store.getState().favorites.playlists[0].id;
-        store.dispatch(addToPlaylist({ playlistId: id, songId: 5 }));
-        expect(store.getState().favorites.playlists[0].songIds).toContain(5);
-    });
-
-    it("addToPlaylist does not add duplicates", () => {
-        const store = makeStore();
-        store.dispatch(createPlaylist("Rock"));
-        const id = store.getState().favorites.playlists[0].id;
-        store.dispatch(addToPlaylist({ playlistId: id, songId: 5 }));
-        store.dispatch(addToPlaylist({ playlistId: id, songId: 5 }));
-        expect(store.getState().favorites.playlists[0].songIds).toHaveLength(1);
-    });
-
-    it("removeFromPlaylist removes the song", () => {
-        const store = makeStore();
-        store.dispatch(createPlaylist("Rock"));
-        const id = store.getState().favorites.playlists[0].id;
-        store.dispatch(addToPlaylist({ playlistId: id, songId: 5 }));
-        store.dispatch(removeFromPlaylist({ playlistId: id, songId: 5 }));
-        expect(store.getState().favorites.playlists[0].songIds).toHaveLength(0);
+        store.dispatch(createQueryFulfilledAction("getFavoriteSongs", favoriteSongs));
+        store.dispatch(createQueryFulfilledAction("getPlaylists", playlists));
+        store.dispatch(logout());
+        expect(store.getState().favorites.favoriteIds).toEqual([]);
+        expect(store.getState().favorites.playlists).toEqual([]);
     });
 });

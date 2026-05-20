@@ -3,9 +3,42 @@ import playerReducer, { playSong, setProgress, setVolume, skipNext, skipPrev, to
 import { Song } from "../../../src/services/types";
 
 const songs: Song[] = [
-    { id: 1, title: "A", artist: "X", duration: "3:00", album: "AL", genre: "Rock", color: "#f00" },
-    { id: 2, title: "B", artist: "Y", duration: "4:00", album: "AL", genre: "Pop", color: "#0f0" },
-    { id: 3, title: "C", artist: "Z", duration: "2:00", album: "BL", genre: "Jazz", color: "#00f" },
+    {
+        id: "1",
+        title: "A",
+        artist: "X",
+        duration: "3:00",
+        durationSeconds: 180,
+        album: "AL",
+        genre: "Rock",
+        color: "#f00",
+        status: "ready",
+        manifestUrl: null,
+    },
+    {
+        id: "2",
+        title: "B",
+        artist: "Y",
+        duration: "4:00",
+        durationSeconds: 240,
+        album: "AL",
+        genre: "Pop",
+        color: "#0f0",
+        status: "ready",
+        manifestUrl: null,
+    },
+    {
+        id: "3",
+        title: "C",
+        artist: "Z",
+        duration: "2:00",
+        durationSeconds: 120,
+        album: "BL",
+        genre: "Jazz",
+        color: "#00f",
+        status: "ready",
+        manifestUrl: null,
+    },
 ];
 
 const makeStore = () => configureStore({ reducer: { player: playerReducer } });
@@ -22,7 +55,7 @@ describe("playerSlice", () => {
     it("playSong sets current song and starts playing", () => {
         const store = makeStore();
         store.dispatch(playSong(songs[0]));
-        expect(store.getState().player.currentSong?.id).toBe(1);
+        expect(store.getState().player.currentSong?.id).toBe("1");
         expect(store.getState().player.isPlaying).toBe(true);
     });
 
@@ -62,13 +95,13 @@ describe("playerSlice", () => {
         const store = makeStore();
         store.dispatch(playSong(songs[2]));
         store.dispatch(skipNext(songs));
-        expect(store.getState().player.currentSong?.id).toBe(1);
+        expect(store.getState().player.currentSong?.id).toBe("1");
     });
 
     it("skipPrev goes to previous song with wrap", () => {
         const store = makeStore();
         store.dispatch(playSong(songs[0]));
         store.dispatch(skipPrev(songs));
-        expect(store.getState().player.currentSong?.id).toBe(3);
+        expect(store.getState().player.currentSong?.id).toBe("3");
     });
 });

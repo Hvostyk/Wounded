@@ -1,49 +1,66 @@
+import type { MediaPlayerClass } from "dashjs";
 import { useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { skipNext, skipPrev, togglePlay } from "../app/playerSlice";
+import { setProgress, skipNext, skipPrev, togglePlay } from "../app/playerSlice";
+import { getServiceUrl } from "../services/config";
 import { useGetSongsQuery } from "../services/woundedApi";
 
-const buildSilentAudio = (): HTMLAudioElement => {
-    const sampleRate = 8000;
-    const numSamples = sampleRate;
-    const buf = new ArrayBuffer(44 + numSamples);
-    const v = new DataView(buf);
-    const str = (off: number, s: string) => {
-        for (let i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i));
-    };
-    str(0, "RIFF");
-    v.setUint32(4, 36 + numSamples, true);
-    str(8, "WAVE");
-    str(12, "fmt ");
-    v.setUint32(16, 16, true);
-    v.setUint16(20, 1, true);
-    v.setUint16(22, 1, true);
-    v.setUint32(24, sampleRate, true);
-    v.setUint32(28, sampleRate, true);
-    v.setUint16(32, 1, true);
-    v.setUint16(34, 8, true);
-    str(36, "data");
-    v.setUint32(40, numSamples, true);
-    for (let i = 0; i < numSamples; i++) v.setUint8(44 + i, 128);
-    const url = URL.createObjectURL(new Blob([buf], { type: "audio/wav" }));
-    const audio = new Audio(url);
-    audio.loop = true;
-    return audio;
-};
+const getTrackStreamUrl = (trackId: string) => getServiceUrl("streaming", `/stream/dash/${trackId}/manifest.mpd`);
 
 export const useMediaSession = () => {
     const dispatch = useAppDispatch();
-    const { currentSong, isPlaying } = useAppSelector(state => state.player);
+    const { currentSong, isPlaying, volume, progress } = useAppSelector(state => state.player);
     const { data: songs = [] } = useGetSongsQuery();
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const playerRef = useRef<MediaPlayerClass | null>(null);
+    const activeTrackIdRef = useRef<string | null>(null);
+    const progressRef = useRef(0);
 
     useEffect(() => {
-        audioRef.current = buildSilentAudio();
+        const audio = new Audio();
+        let isDisposed = false;
+        const handleTimeUpdate = () => {
+            if (!audio.duration || Number.isNaN(audio.duration)) {
+                dispatch(setProgress(0));
+                progressRef.current = 0;
+                return;
+            }
+
+            const nextProgress = Math.min(100, (audio.currentTime / audio.duration) * 100);
+            progressRef.current = nextProgress;
+            dispatch(setProgress(nextProgress));
+        };
+
+        const handleEnded = () => {
+            dispatch(skipNext(songs));
+        };
+
+        audio.preload = "auto";
+        audio.crossOrigin = "anonymous";
+        audioRef.current = audio;
+        audio.addEventListener("timeupdate", handleTimeUpdate);
+        audio.addEventListener("ended", handleEnded);
+
+        void import("dashjs").then(({ MediaPlayer }) => {
+            if (isDisposed) {
+                return;
+            }
+
+            const player = MediaPlayer().create();
+            player.initialize(audio, undefined, false);
+            playerRef.current = player;
+        });
+
         return () => {
-            audioRef.current?.pause();
+            isDisposed = true;
+            audio.pause();
+            audio.removeEventListener("timeupdate", handleTimeUpdate);
+            audio.removeEventListener("ended", handleEnded);
+            playerRef.current?.reset();
+            playerRef.current = null;
             audioRef.current = null;
         };
-    }, []);
+    }, [dispatch, songs]);
 
     useEffect(() => {
         if (!("mediaSession" in navigator)) return;
@@ -68,13 +85,60 @@ export const useMediaSession = () => {
 
     useEffect(() => {
         const audio = audioRef.current;
-        if (!audio || !("mediaSession" in navigator)) return;
-        if (isPlaying && currentSong) {
-            audio.play().catch(() => {});
-            navigator.mediaSession.playbackState = "playing";
-        } else {
-            audio.pause();
-            navigator.mediaSession.playbackState = currentSong ? "paused" : "none";
+        const player = playerRef.current;
+
+        if (!audio || !player) {
+            return;
         }
-    }, [isPlaying, currentSong]);
+
+        if (!currentSong) {
+            activeTrackIdRef.current = null;
+            audio.pause();
+            audio.removeAttribute("src");
+            audio.load();
+            dispatch(setProgress(0));
+
+            if ("mediaSession" in navigator) {
+                navigator.mediaSession.playbackState = "none";
+            }
+
+            return;
+        }
+
+        const trackChanged = activeTrackIdRef.current !== currentSong.id;
+
+        if (trackChanged) {
+            activeTrackIdRef.current = currentSong.id;
+            progressRef.current = 0;
+            dispatch(setProgress(0));
+            player.attachSource(getTrackStreamUrl(currentSong.id));
+        }
+
+        if (Math.abs(progress - progressRef.current) > 2 && audio.duration && Number.isFinite(audio.duration)) {
+            audio.currentTime = (progress / 100) * audio.duration;
+        }
+
+        if ("mediaSession" in navigator) {
+            navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+        }
+
+        if (!isPlaying) {
+            audio.pause();
+            return;
+        }
+
+        audio.play().catch(() => {
+            dispatch(togglePlay());
+        });
+    }, [currentSong, dispatch, isPlaying, progress]);
+
+    useEffect(() => {
+        const audio = audioRef.current;
+
+        if (!audio) {
+            return;
+        }
+
+        audio.volume = volume / 100;
+    }, [volume]);
 };
