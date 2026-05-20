@@ -5,6 +5,7 @@ export type FormMode = "login" | "register";
 
 export interface MyFormValues {
     login: string;
+    username?: string;
     password: string;
     confirmPassword?: string;
 }

@@ -1,8 +1,9 @@
 import { HeartFilled, HeartOutlined, PlayCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { Dropdown, type MenuProps } from "antd";
-import { addToPlaylist, toggleFavorite } from "../../../app/favoritesSlice";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { Dropdown, message, type MenuProps } from "antd";
+import { MouseEvent } from "react";
+import { useAppSelector } from "../../../app/hooks";
 import { Song } from "../../../services/types";
+import { useAddFavoriteMutation, useRemoveFavoriteMutation, useUpdatePlaylistMutation } from "../../../services/woundedApi";
 import "./style.scss";
 
 interface SongCardProps {
@@ -12,16 +13,44 @@ interface SongCardProps {
 }
 
 export const SongCard = ({ song, isActive = false, onClick }: SongCardProps) => {
-    const dispatch = useAppDispatch();
     const isFavorite = useAppSelector(state => state.favorites.favoriteIds.includes(song.id));
     const playlists = useAppSelector(state => state.favorites.playlists);
+    const [addFavorite, { isLoading: isAddingFavorite }] = useAddFavoriteMutation();
+    const [removeFavorite, { isLoading: isRemovingFavorite }] = useRemoveFavoriteMutation();
+    const [updatePlaylist] = useUpdatePlaylistMutation();
 
-    const playlistItems: MenuProps["items"] = playlists.map(p => ({
-        key: p.id,
-        label: p.name,
-        onClick: ({ domEvent }) => {
+    const handleFavoriteClick = async (event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+
+        try {
+            if (isFavorite) {
+                await removeFavorite(song.id).unwrap();
+            } else {
+                await addFavorite(song.id).unwrap();
+            }
+        } catch {
+            message.error("Не удалось обновить избранное");
+        }
+    };
+
+    const playlistItems: MenuProps["items"] = playlists.map(playlist => ({
+        key: playlist.id,
+        label: playlist.title,
+        onClick: async ({ domEvent }) => {
             domEvent.stopPropagation();
-            dispatch(addToPlaylist({ playlistId: p.id, songId: song.id }));
+
+            try {
+                const nextTrackIds = playlist.trackIds.includes(song.id) ? playlist.trackIds : [...playlist.trackIds, song.id];
+
+                await updatePlaylist({
+                    playlistId: playlist.id,
+                    title: playlist.title,
+                    description: playlist.description,
+                    trackIds: nextTrackIds,
+                }).unwrap();
+            } catch {
+                message.error("Не удалось обновить плейлист");
+            }
         },
     }));
 
@@ -42,17 +71,15 @@ export const SongCard = ({ song, isActive = false, onClick }: SongCardProps) => 
             <div className="song-card__actions">
                 <button
                     className={`song-card__fav-btn${isFavorite ? " song-card__fav-btn--active" : ""}`}
-                    onClick={e => {
-                        e.stopPropagation();
-                        dispatch(toggleFavorite(song.id));
-                    }}
+                    onClick={event => void handleFavoriteClick(event)}
                     data-testid={`fav-btn-${song.id}`}
+                    disabled={isAddingFavorite || isRemovingFavorite}
                 >
                     {isFavorite ? <HeartFilled /> : <HeartOutlined />}
                 </button>
                 {playlists.length > 0 && (
                     <Dropdown menu={{ items: playlistItems }} trigger={["click"]}>
-                        <button className="song-card__playlist-btn" onClick={e => e.stopPropagation()}>
+                        <button className="song-card__playlist-btn" onClick={event => event.stopPropagation()}>
                             <PlusOutlined />
                         </button>
                     </Dropdown>

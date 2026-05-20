@@ -2,10 +2,54 @@ import { Song } from "../../../src/services/types";
 import { filterSongs, getGreeting, uniqueValues } from "../../../src/utils/songUtils";
 
 const songs: Song[] = [
-    { id: 1, title: "Neon Pulse", artist: "CrimsonWave", duration: "3:42", album: "Digital Wounds", genre: "Synthwave", color: "#c2185b" },
-    { id: 2, title: "Midnight Echo", artist: "Hollow Space", duration: "4:15", album: "Void Sessions", genre: "Ambient", color: "#7c3aed" },
-    { id: 3, title: "Shattered Glass", artist: "Iron Circuit", duration: "2:58", album: "Broken Signal", genre: "Electronic", color: "#0891b2" },
-    { id: 4, title: "Burn Slow", artist: "CrimsonWave", duration: "5:01", album: "Digital Wounds", genre: "Synthwave", color: "#ea580c" },
+    {
+        id: "1",
+        title: "Neon Pulse",
+        artist: "CrimsonWave",
+        duration: "3:42",
+        durationSeconds: 222,
+        album: "Digital Wounds",
+        genre: "Synthwave",
+        color: "#c2185b",
+        status: "ready",
+        manifestUrl: null,
+    },
+    {
+        id: "2",
+        title: "Midnight Echo",
+        artist: "Hollow Space",
+        duration: "4:15",
+        durationSeconds: 255,
+        album: "Void Sessions",
+        genre: "Ambient",
+        color: "#7c3aed",
+        status: "ready",
+        manifestUrl: null,
+    },
+    {
+        id: "3",
+        title: "Shattered Glass",
+        artist: "Iron Circuit",
+        duration: "2:58",
+        durationSeconds: 178,
+        album: "Broken Signal",
+        genre: "Electronic",
+        color: "#0891b2",
+        status: "ready",
+        manifestUrl: null,
+    },
+    {
+        id: "4",
+        title: "Burn Slow",
+        artist: "CrimsonWave",
+        duration: "5:01",
+        durationSeconds: 301,
+        album: "Digital Wounds",
+        genre: "Synthwave",
+        color: "#ea580c",
+        status: "ready",
+        manifestUrl: null,
+    },
 ];
 
 describe("filterSongs", () => {
@@ -17,7 +61,7 @@ describe("filterSongs", () => {
     it("filters by genre", () => {
         const result = filterSongs(songs, { genre: "Synthwave", artist: null, album: null, search: "" });
         expect(result).toHaveLength(2);
-        expect(result.every(s => s.genre === "Synthwave")).toBe(true);
+        expect(result.every(song => song.genre === "Synthwave")).toBe(true);
     });
 
     it("filters by artist", () => {

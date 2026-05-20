@@ -5,6 +5,7 @@ import { Outlet } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { themeMode } from "../../../app/themeSlice";
 import { useMediaSession } from "../../../hooks/useMediaSession";
+import { useGetFavoriteSongsQuery, useGetPlaylistsQuery } from "../../../services/woundedApi";
 import { Logo } from "../Logo";
 import { NavItems } from "../NavItems";
 import { PlayerBar } from "../PlayerBar";
@@ -13,7 +14,10 @@ import "./style.scss";
 export const AppLayout = () => {
     const dispatch = useAppDispatch();
     const currentTheme = useAppSelector(state => state.theme.value);
+    const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
     useMediaSession();
+    useGetFavoriteSongsQuery(undefined, { skip: !isAuthenticated });
+    useGetPlaylistsQuery(undefined, { skip: !isAuthenticated });
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     return (

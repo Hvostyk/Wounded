@@ -5,10 +5,18 @@ import { setProgress, setVolume, skipNext, skipPrev, togglePlay } from "../../..
 import { useGetSongsQuery } from "../../../services/woundedApi";
 import "./style.scss";
 
+const formatTime = (value: number): string => {
+    const safeValue = Math.max(0, Math.floor(value));
+    const minutes = Math.floor(safeValue / 60);
+    const seconds = safeValue % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+};
+
 export const PlayerBar = () => {
     const dispatch = useAppDispatch();
     const { currentSong, isPlaying, progress, volume } = useAppSelector(state => state.player);
     const { data: songs = [] } = useGetSongsQuery();
+    const elapsedSeconds = currentSong ? (currentSong.durationSeconds * progress) / 100 : 0;
 
     return (
         <footer className="player-bar">
@@ -67,7 +75,7 @@ export const PlayerBar = () => {
 
             <div className="player-bar__timeline">
                 <Typography.Text type="secondary" className="player-bar__time">
-                    {currentSong ? "1:12" : "0:00"}
+                    {formatTime(elapsedSeconds)}
                 </Typography.Text>
                 <Slider
                     value={progress}
